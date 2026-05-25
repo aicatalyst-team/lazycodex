@@ -91,11 +91,13 @@ jobs:
           echo "::endgroup::"
 
       - name: PageSpeed Insights — Lighthouse 100/100/100/100 (live URL)
+        continue-on-error: true # PSI shared quota throttles on frequent CI runs; Playwright Lighthouse in web-ci.yml is the gating check.
         run: |
           set -euo pipefail
           # Google PageSpeed Insights audits the live URL from Google's servers
           # — the canonical Lighthouse measurement (immune to any local/CI
-          # rendering quirks). No API key needed for occasional invocations.
+          # rendering quirks). No API key needed for occasional invocations,
+          # but shared quota gets hit on frequent CI; non-blocking here.
           for strategy in mobile desktop; do
             echo "::group::PSI ${strategy}"
             json=$(curl -sfG \
